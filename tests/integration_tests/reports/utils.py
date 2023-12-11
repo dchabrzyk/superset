@@ -135,10 +135,14 @@ def create_report_notification(
                 }
             ),
         )
-    else:
+    elif email_target:
         recipient = ReportRecipients(
             type=ReportRecipientType.EMAIL,
             recipient_config_json=json.dumps({"target": email_target}),
+        )
+    else:
+        recipient = ReportRecipients(
+            type=ReportRecipientType.WEBHOOK
         )
 
     if name is None:

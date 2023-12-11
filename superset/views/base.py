@@ -404,10 +404,12 @@ def cached_common_bootstrap_data(  # pylint: disable=unused-argument
         frontend_config["ALERT_REPORTS_NOTIFICATION_METHODS"] = [
             ReportRecipientType.EMAIL,
             ReportRecipientType.SLACK,
+            ReportRecipientType.WEBHOOK
         ]
     else:
         frontend_config["ALERT_REPORTS_NOTIFICATION_METHODS"] = [
             ReportRecipientType.EMAIL,
+            ReportRecipientType.WEBHOOK
         ]
 
     # verify client has google sheets installed
