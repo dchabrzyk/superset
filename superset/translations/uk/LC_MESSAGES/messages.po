@@ -2429,8 +2429,9 @@ msgid "Area Chart"
 msgstr "Діаграма"
 
 #: superset-frontend/plugins/legacy-preset-chart-nvd3/src/Area/index.js:42
-msgid "Time-series Area Chart (legacy)"
-msgstr "Діаграма області (спадщина)"
+#, fuzzy
+msgid "Area Chart (legacy)"
+msgstr "Діаграма (спадщина)"
 
 #: superset-frontend/plugins/plugin-chart-echarts/src/MixedTimeseries/controlPanel.tsx:177
 msgid "Area chart"
@@ -20430,3 +20431,4 @@ msgstr "рік"
 #: superset-frontend/plugins/plugin-chart-echarts/src/Timeseries/transformProps.ts:578
 msgid "zoom area"
 msgstr "масштаб"
+

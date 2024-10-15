@@ -2460,8 +2460,9 @@ msgid "Area Chart"
 msgstr "Gráfico de área"
 
 #: superset-frontend/plugins/legacy-preset-chart-nvd3/src/Area/index.js:42
-msgid "Time-series Area Chart (legacy)"
-msgstr "Gráfico de área (legado)"
+#, fuzzy
+msgid "Area Chart (legacy)"
+msgstr "Gráfico de barras (legado)"
 
 #: superset-frontend/plugins/plugin-chart-echarts/src/MixedTimeseries/controlPanel.tsx:177
 msgid "Area chart"
@@ -20608,3 +20609,4 @@ msgstr "ano"
 #: superset-frontend/plugins/plugin-chart-echarts/src/Timeseries/transformProps.ts:578
 msgid "zoom area"
 msgstr "área de zoom"
+

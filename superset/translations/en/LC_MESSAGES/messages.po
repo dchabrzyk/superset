@@ -2284,7 +2284,7 @@ msgid "Area Chart"
 msgstr ""
 
 #: superset-frontend/plugins/legacy-preset-chart-nvd3/src/Area/index.js:42
-msgid "Time-series Area Chart (legacy)"
+msgid "Area Chart (legacy)"
 msgstr ""
 
 #: superset-frontend/plugins/plugin-chart-echarts/src/MixedTimeseries/controlPanel.tsx:177
@@ -19222,3 +19222,4 @@ msgstr ""
 #: superset-frontend/plugins/plugin-chart-echarts/src/Timeseries/transformProps.ts:578
 msgid "zoom area"
 msgstr ""
+

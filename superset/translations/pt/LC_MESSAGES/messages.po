@@ -2405,7 +2405,7 @@ msgstr "Explorar gráfico"
 
 #: superset-frontend/plugins/legacy-preset-chart-nvd3/src/Area/index.js:42
 #, fuzzy
-msgid "Time-series Area Chart (legacy)"
+msgid "Area Chart (legacy)"
 msgstr "Explorar gráfico"
 
 #: superset-frontend/plugins/plugin-chart-echarts/src/MixedTimeseries/controlPanel.tsx:177
@@ -20271,3 +20271,4 @@ msgstr "ano"
 #: superset-frontend/plugins/plugin-chart-echarts/src/Timeseries/transformProps.ts:578
 msgid "zoom area"
 msgstr ""
+
