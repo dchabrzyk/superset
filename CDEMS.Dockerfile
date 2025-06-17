@@ -1,12 +1,17 @@
-FROM apache/superset:4.1.1
+FROM apache/superset:5.0.0rc3
 
 USER root
 
-# Copy the custom translations into the Docker image
-COPY superset/translations/pl /app/superset/translations/pl
+# Install packages using uv into the virtual environment
+# Superset started using uv after the 4.1 branch; if you are building from apache/superset:4.1.x,
+# replace the first two lines with RUN pip install \
+RUN . /app/.venv/bin/activate && \
+    uv pip install \
+    # install psycopg2 for using PostgreSQL metadata store - could be a MySQL package if using that backend:
+    psycopg2-binary
 
-RUN rm /app/superset/translations/pl/LC_MESSAGES/*.po
-
-RUN pip install psycopg2-binary==2.9.6
-
+# Switch back to the superset user
 USER superset
+
+CMD ["/app/docker/entrypoints/run-server.sh"]
+
