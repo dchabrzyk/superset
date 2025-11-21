@@ -32,12 +32,12 @@ RUN npm install -g po2json
 # Compile frontend translations (.po -> .json)
 # This generates messages.json files that the React frontend uses
 RUN for file in $(find /app/superset/translations -name "*.po"); do \
-      extension="${file##*.}"; \
-      filename="${file%.*}"; \
-      if [ "$extension" = "po" ]; then \
-        echo "Converting $file to $filename.json"; \
-        po2json --domain superset --format jed1.x --fuzzy "$file" "$filename.json" || true; \
-      fi; \
+    extension="${file##*.}"; \
+    filename="${file%.*}"; \
+    if [ "$extension" = "po" ]; then \
+    echo "Converting $file to $filename.json"; \
+    po2json --domain superset --format jed1.x --fuzzy "$file" "$filename.json" || true; \
+    fi; \
     done
 
 # Verify translations were compiled successfully
