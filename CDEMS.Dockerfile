@@ -1,60 +1,52 @@
 #
 # CDEMS Custom Superset Build
-# Extends official apache/superset:6.0.0rc3 with translations and PostgreSQL support
+# Extends the official apache/superset image with compiled translations
+# and PostgreSQL metadata store support.
 #
 
-FROM apache/superset:6.1.0 AS base
+ARG SUPERSET_VERSION=6.1.0
+
+FROM apache/superset:${SUPERSET_VERSION} AS translations-builder
 
 USER root
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-# Install babel for compiling translations
-RUN . /app/.venv/bin/activate && \
-    uv pip install babel
-
-# Copy translation source files from this repo
-# (these are the .po files that exist in Superset source but were removed from docker image)
-COPY superset/translations /app/superset/translations
-
-# Compile backend translations (.po -> .mo)
-RUN . /app/.venv/bin/activate && \
-    cd /app && \
-    pybabel compile -d superset/translations || true
-
-# Install Node.js and npm for frontend translation compilation
+# Install builder-only tools for translation compilation.
 RUN apt-get update && \
-    apt-get install -y nodejs npm && \
-    apt-get clean && \
+    apt-get install -y --no-install-recommends nodejs npm && \
     rm -rf /var/lib/apt/lists/*
 
-# Install po2json for frontend translation compilation
+RUN . /app/.venv/bin/activate && \
+    uv pip install --no-cache-dir Babel
+
 RUN npm install -g po2json
 
-# Compile frontend translations (.po -> .json)
-# This generates messages.json files that the React frontend uses
-RUN for file in $(find /app/superset/translations -name "*.po"); do \
-    extension="${file##*.}"; \
-    filename="${file%.*}"; \
-    if [ "$extension" = "po" ]; then \
-    echo "Converting $file to $filename.json"; \
-    po2json --domain superset --format jed1.x --fuzzy "$file" "$filename.json" || true; \
-    fi; \
-    done
+# Compile backend .mo files and frontend .json files in a temporary build location.
+COPY superset/translations /tmp/superset-translations
 
-# Verify translations were compiled successfully
-RUN echo "=== Checking compiled translations ===" && \
-    find /app/superset/translations/pl/LC_MESSAGES/ -type f -exec ls -lh {} \; && \
-    echo "=== Translation check complete ==="
+RUN set -eux; \
+    . /app/.venv/bin/activate; \
+    pybabel compile -d /tmp/superset-translations || true; \
+    test -f /tmp/superset-translations/en/LC_MESSAGES/messages.mo; \
+    test -f /tmp/superset-translations/pl/LC_MESSAGES/messages.mo; \
+    find /tmp/superset-translations -name "*.po" -print0 | while IFS= read -r -d '' file; do \
+    json_file="${file%.po}.json"; \
+    po2json --domain superset --format jed1.x --fuzzy "$file" "$json_file"; \
+    done; \
+    find /tmp/superset-translations -name "*.po" -delete; \
+    find /tmp/superset-translations -name "*.pot" -delete
 
-# Install psycopg2-binary for PostgreSQL metadata store
+FROM apache/superset:${SUPERSET_VERSION} AS runtime
+
+USER root
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+# Runtime-only dependency for PostgreSQL metadata store.
 RUN . /app/.venv/bin/activate && \
-    uv pip install psycopg2-binary
+    uv pip install --no-cache-dir psycopg2-binary
 
-# Clean up .po source files to reduce image size (keep compiled .mo and .json)
-# Temporarily disabled to debug
-# RUN find /app/superset/translations -name "*.po" -delete && \
-#     find /app/superset/translations -name "*.pot" -delete
+COPY --from=translations-builder /tmp/superset-translations /app/superset/translations
 
-# Switch back to superset user
 USER superset
 
 CMD ["/app/docker/entrypoints/run-server.sh"]
